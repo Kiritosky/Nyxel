@@ -27,17 +27,20 @@ public class NyxelConfig {
     public Hud hud = new Hud();
     public Api api = new Api();
 
-    /** Hypixel API access — the baseplate's live-data source. */
+    /**
+     * Hypixel API access — the baseplate's live-data source. Players never enter a
+     * key: every install uses Nyxel's shared backend proxy, which holds the single
+     * production key server-side. The direct-key fields exist only for local dev.
+     */
     public static class Api {
         /**
-         * Backend proxy base URL (e.g. {@code https://nyxel-proxy.vercel.app/api/hypixel}).
-         * When set, all Hypixel calls go through it and NO key is needed client-side
-         * — the key lives only on the proxy. Preferred over {@link #hypixelKey}.
+         * Backend proxy base URL — baked in so the mod works out of the box for
+         * every user (no key, no setup). The proxy holds the production key.
          */
-        public String proxyUrl = "";
+        public String proxyUrl = "https://nyxel-proxy.vercel.app/api/hypixel";
         /** Optional shared token sent to the proxy as {@code X-Nyxel-Token}. */
         public String modToken = "";
-        /** Personal Hypixel API key (only used for direct calls when no proxy is set). */
+        /** Dev-only: personal key for direct calls when {@link #proxyUrl} is cleared. */
         public String hypixelKey = "";
         /** Cache TTL for player/profile data, in seconds. */
         public int cacheSeconds = 300;
