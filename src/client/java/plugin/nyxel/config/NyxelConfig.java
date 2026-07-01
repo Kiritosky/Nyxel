@@ -4,9 +4,10 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * Plain serialized config POJO. One nested section per area; primitive/boxed
- * fields only so Gson round-trips cleanly. Defaults here are the install-time
- * defaults.
+ * Plain serialized config POJO for the baseplate: the feature framework's toggle
+ * and per-feature option maps, HUD styling/placement, and the API access block.
+ * Feature-specific sections are added back by the features that need them. Primitive
+ * / boxed fields only so Gson round-trips cleanly.
  */
 public class NyxelConfig {
 
@@ -23,16 +24,13 @@ public class NyxelConfig {
     /** Persisted HUD element placement, keyed by element id. */
     public Map<String, HudPlacement> hudPlacements = new LinkedHashMap<>();
 
-    public Fishing fishing = new Fishing();
-    public Economy economy = new Economy();
     public Hud hud = new Hud();
     public Api api = new Api();
-    public Garden garden = new Garden();
 
-    /** Hypixel API access. */
+    /** Hypixel API access — the baseplate's live-data source. */
     public static class Api {
         /**
-         * Backend proxy base URL (e.g. {@code https://nyxel-proxy.vercel.app/api}).
+         * Backend proxy base URL (e.g. {@code https://nyxel-proxy.vercel.app/api/hypixel}).
          * When set, all Hypixel calls go through it and NO key is needed client-side
          * — the key lives only on the proxy. Preferred over {@link #hypixelKey}.
          */
@@ -41,18 +39,8 @@ public class NyxelConfig {
         public String modToken = "";
         /** Personal Hypixel API key (only used for direct calls when no proxy is set). */
         public String hypixelKey = "";
-        /** Cache TTL for player/profile/garden data, in seconds. */
+        /** Cache TTL for player/profile data, in seconds. */
         public int cacheSeconds = 300;
-    }
-
-    /** Greenhouse Mutation Helper settings. */
-    public static class Garden {
-        /** Use the live garden state from the API to pre-fill the planner. */
-        public boolean autoFillFromApi = true;
-        /** Show the in-world greenhouse placement overlay (phase 2). */
-        public boolean overlay = false;
-        /** Optional remote dataset override URL; empty = bundled only. */
-        public String datasetUrl = "";
     }
 
     public static class HudPlacement {
@@ -78,20 +66,5 @@ public class NyxelConfig {
     public static class Hud {
         public boolean textShadow = true;
         public boolean background = true;
-    }
-
-    public static class Fishing {
-        public boolean seaCreatureSound = true;
-        public boolean seaCreatureTitle = true;
-        public boolean gearWarnings = true;
-
-        /** Trophy fish catch counts, keyed "fishName:tier" (lower-case tier). */
-        public Map<String, Integer> trophyCounts = new LinkedHashMap<>();
-    }
-
-    public static class Economy {
-        /** Cache TTL for Bazaar/AH data, in seconds. */
-        public int priceCacheSeconds = 120;
-        public boolean showTooltipPrices = true;
     }
 }

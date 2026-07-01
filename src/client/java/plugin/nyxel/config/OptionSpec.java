@@ -1,10 +1,10 @@
-package plugin.nyxel.config.gui.option;
+package plugin.nyxel.config;
 
 /**
  * Declarative description of a single per-feature config option. Features return
- * these from {@code Feature.configOptions()}; the config screen turns each into a
- * concrete {@link OptionRow} (toggle or slider) bound to the feature's namespaced
- * option map. Keeping features free of GUI/persistence details.
+ * these from {@code Feature.configOptions()}; a future GUI turns each into a
+ * concrete control bound to the feature's namespaced option map ({@link FeatureOptions}).
+ * Kept GUI-free so the config model doesn't depend on any rendering layer.
  */
 public final class OptionSpec {
 

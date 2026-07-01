@@ -1,6 +1,6 @@
 package plugin.nyxel.core;
 
-import plugin.nyxel.config.gui.option.OptionSpec;
+import plugin.nyxel.config.OptionSpec;
 
 import java.util.List;
 

@@ -3,7 +3,6 @@ package plugin.nyxel.hud;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
-import plugin.nyxel.config.gui.widget.ColorPicker;
 
 /**
  * Centralized HUD text drawing. {@link HudManager} sets the per-element style
@@ -52,6 +51,24 @@ public final class HudText {
 
     public static int chromaColor() {
         float h = (System.currentTimeMillis() % 3000L) / 3000f;
-        return 0xFF000000 | ColorPicker.hsvToRgb(h, 0.8f, 1f);
+        return 0xFF000000 | hsvToRgb(h, 0.8f, 1f);
+    }
+
+    /** Minimal HSV→RGB (0..1 inputs) returning a 0xRRGGBB int. */
+    private static int hsvToRgb(float h, float s, float v) {
+        int i = (int) (h * 6) % 6;
+        float f = h * 6 - (int) (h * 6);
+        float p = v * (1 - s), q = v * (1 - f * s), t = v * (1 - (1 - f) * s);
+        float r, g, b;
+        switch (i) {
+            case 0 -> { r = v; g = t; b = p; }
+            case 1 -> { r = q; g = v; b = p; }
+            case 2 -> { r = p; g = v; b = t; }
+            case 3 -> { r = p; g = q; b = v; }
+            case 4 -> { r = t; g = p; b = v; }
+            default -> { r = v; g = p; b = q; }
+        }
+        return ((int) (r * 255) << 16) | ((int) (g * 255) << 8) | (int) (b * 255);
     }
 }
+

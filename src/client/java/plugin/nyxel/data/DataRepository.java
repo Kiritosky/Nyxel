@@ -1,4 +1,4 @@
-package plugin.nyxel.feature.common.data;
+package plugin.nyxel.data;
 
 import com.google.gson.Gson;
 import plugin.nyxel.Nyxel;
@@ -6,7 +6,6 @@ import plugin.nyxel.api.HttpJson;
 import plugin.nyxel.core.NyxelExecutor;
 
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.HashMap;
@@ -29,7 +28,7 @@ import java.util.Map;
  *
  * The bundled file is the baseline; {@link #tryLoadRemote(String)} allows a remote
  * override so game updates need not ship a mod update, with bundled as fallback.
- * This generalizes the pattern originally written for the garden mutation dataset.
+ * Part of the baseplate data layer — features build their bundled datasets on this.
  *
  * @param <T> the record type held by this repository
  */

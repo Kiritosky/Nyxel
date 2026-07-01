@@ -1,37 +1,25 @@
 package plugin.nyxel.core;
 
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.option.KeyBinding;
-import plugin.nyxel.config.gui.NyxelConfigScreen;
-import plugin.nyxel.feature.crafting.CraftingPlannerFeature;
-import plugin.nyxel.feature.garden.MutationHelperFeature;
-import plugin.nyxel.feature.general.MinionPlannerFeature;
 import plugin.nyxel.hud.HudManager;
 
 /**
- * Wires all Fabric client callbacks to Nyxel's core systems in one place so
+ * Wires the Fabric client callbacks to Nyxel's core systems in one place so
  * features never touch the event API directly. Registered once at client init.
+ * The baseplate wires per-tick state + feature dispatch, chat routing, and HUD
+ * rendering; screen/keybind/command wiring returns with the GUI phase.
  */
 public final class EventHooks {
 
     private EventHooks() {
     }
 
-    public static void register(FeatureManager features,
-                                SkyblockState state,
-                                HudManager hud,
-                                KeyBinding openConfigKey) {
+    public static void register(FeatureManager features, SkyblockState state, HudManager hud) {
 
         ClientTickEvents.END_CLIENT_TICK.register(mc -> {
             state.update(mc);
-            while (openConfigKey.wasPressed()) {
-                mc.setScreen(new NyxelConfigScreen(features, hud, null));
-            }
             features.onClientTick(mc);
         });
 
@@ -49,44 +37,6 @@ public final class EventHooks {
         HudRenderCallback.EVENT.register((drawContext, tickCounter) -> {
             hud.render(drawContext);
             Alerts.render(drawContext);
-        });
-
-        ClientCommandRegistrationCallback.EVENT.register((dispatcher, access) -> {
-            dispatcher.register(ClientCommandManager.literal("nyxel").executes(ctx -> {
-                MinecraftClient mc = MinecraftClient.getInstance();
-                mc.execute(() -> mc.setScreen(new NyxelConfigScreen(features, hud, null)));
-                return 1;
-            }));
-            dispatcher.register(ClientCommandManager.literal("mutations").executes(ctx -> {
-                MinecraftClient mc = MinecraftClient.getInstance();
-                mc.execute(() -> {
-                    if (features.byId(MutationHelperFeature.ID)
-                            instanceof MutationHelperFeature mh) {
-                        mh.openPlanner(null);
-                    }
-                });
-                return 1;
-            }));
-            dispatcher.register(ClientCommandManager.literal("minions").executes(ctx -> {
-                MinecraftClient mc = MinecraftClient.getInstance();
-                mc.execute(() -> {
-                    if (features.byId(MinionPlannerFeature.ID)
-                            instanceof MinionPlannerFeature mp) {
-                        mp.openPlanner(null);
-                    }
-                });
-                return 1;
-            }));
-            dispatcher.register(ClientCommandManager.literal("recipes").executes(ctx -> {
-                MinecraftClient mc = MinecraftClient.getInstance();
-                mc.execute(() -> {
-                    if (features.byId(CraftingPlannerFeature.ID)
-                            instanceof CraftingPlannerFeature cp) {
-                        cp.openPlanner(null);
-                    }
-                });
-                return 1;
-            }));
         });
     }
 }
