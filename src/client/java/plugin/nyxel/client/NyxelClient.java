@@ -1,6 +1,10 @@
 package plugin.nyxel.client;
 
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.util.InputUtil;
+import org.lwjgl.glfw.GLFW;
 import plugin.nyxel.Nyxel;
 import plugin.nyxel.config.ConfigManager;
 import plugin.nyxel.core.EventHooks;
@@ -31,7 +35,11 @@ public class NyxelClient implements ClientModInitializer {
         // Features are registered here as the mod grows (none in the baseplate).
         features.initEnabledState();
 
-        EventHooks.register(features, state, hud);
+        KeyBinding openConfig = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+                "key.nyxel.config", InputUtil.Type.KEYSYM,
+                GLFW.GLFW_KEY_UNKNOWN, KeyBinding.Category.MISC));
+
+        EventHooks.register(features, state, hud, openConfig);
 
         Nyxel.LOGGER.info("[{}] client init (baseplate): {} features",
                 Nyxel.MOD_NAME, features.all().size());
