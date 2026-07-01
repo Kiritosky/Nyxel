@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "id": "nyxel",
+  "version": "${version}",
+  "name": "Nyxel",
+  "description": "Nyxel is an Hypixel Skyblock QoL mod",
+  "authors": [],
+  "contact": {},
+  "license": "All-Rights-Reserved",
+  "icon": "assets/nyxel/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "fabric-datagen": [
+      "plugin.nyxel.client.NyxelDataGenerator"
+    ],
+    "client": [
+      "plugin.nyxel.client.NyxelClient"
+    ],
+    "main": [
+      "plugin.nyxel.Nyxel"
+    ]
+  },
+  "mixins": [
+    "nyxel.mixins.json",
+    {
+      "config": "nyxel.client.mixins.json",
+      "environment": "client"
+    }
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric-api": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}
