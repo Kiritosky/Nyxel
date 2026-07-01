@@ -3,6 +3,7 @@ package plugin.nyxel.feature.hud;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
+import plugin.nyxel.core.ActionBarListener;
 import plugin.nyxel.core.Feature;
 import plugin.nyxel.core.SkyblockState;
 import plugin.nyxel.hud.HudElement;
@@ -16,7 +17,7 @@ import java.util.regex.Pattern;
  * shows a HUD element with the current skill and an XP/hour estimate. Anchor
  * feature proving the HUD + action-bar pipeline.
  */
-public final class SkillTrackerFeature implements Feature, HudElement {
+public final class SkillTrackerFeature implements Feature, ActionBarListener, HudElement {
 
     private static final Pattern GAIN =
             Pattern.compile("\\+([\\d,]+(?:\\.\\d+)?) (\\w+) \\(");

@@ -1,15 +1,18 @@
 package plugin.nyxel.core;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
+import plugin.nyxel.config.gui.option.OptionSpec;
+
+import java.util.List;
 
 /**
  * A toggleable unit of functionality. Features are registered with the
  * {@link FeatureManager}, which owns their lifecycle and persisted enabled state.
  *
- * <p>Implementations override only the hooks they need. Heavy work belongs in the
- * per-tick / per-render hooks; one-off setup (registering chat patterns, HUD
- * elements) belongs in {@link #onEnable()}.
+ * <p>Implementations override only what they need. Per-tick or action-bar work is
+ * opt-in via the {@link TickListener} / {@link ActionBarListener} capability
+ * interfaces; HUD rendering is opt-in via {@link plugin.nyxel.hud.HudElement}.
+ * One-off setup (registering chat patterns, tooltip callbacks) belongs in
+ * {@link #onEnable()}.
  */
 public interface Feature {
 
@@ -32,6 +35,15 @@ public interface Feature {
         return true;
     }
 
+    /**
+     * Declarative per-feature config options, rendered generically under the
+     * feature's toggle in the config screen and persisted namespaced under the
+     * feature id. Empty by default.
+     */
+    default List<OptionSpec> configOptions() {
+        return List.of();
+    }
+
     /** Called when the feature transitions to enabled (or at startup if already on). */
     default void onEnable() {
     }
@@ -40,24 +52,13 @@ public interface Feature {
     default void onDisable() {
     }
 
-    /** Per client tick, only while enabled. */
-    default void onClientTick(MinecraftClient mc) {
-    }
-
-    /** Per HUD render frame, only while enabled. */
-    default void onHudRender(DrawContext ctx, float tickDelta) {
-    }
-
-    /** Action-bar (overlay) text update, only while enabled. */
-    default void onActionBar(String text) {
-    }
-
     /** Config GUI categories. */
     enum Category {
         GARDEN("Garden"),
         FISHING("Fishing"),
         HUD("HUD & Overlays"),
         ECONOMY("Economy"),
+        CRAFTING("Crafting & Recipes"),
         DUNGEONS("Dungeons & Slayers"),
         MINING("Mining & Farming"),
         GENERAL("General");

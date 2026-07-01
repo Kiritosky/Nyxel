@@ -13,6 +13,13 @@ public class NyxelConfig {
     /** Per-feature enabled flags, keyed by {@code Feature.id()}. */
     public Map<String, Boolean> featureToggles = new LinkedHashMap<>();
 
+    /**
+     * Per-feature option values, keyed by {@code Feature.id()} then option key.
+     * Declared via {@code Feature.configOptions()} and accessed through
+     * {@link FeatureOptions}. Values are primitives/boxed so Gson round-trips.
+     */
+    public Map<String, Map<String, Object>> featureOptions = new LinkedHashMap<>();
+
     /** Persisted HUD element placement, keyed by element id. */
     public Map<String, HudPlacement> hudPlacements = new LinkedHashMap<>();
 
@@ -24,7 +31,15 @@ public class NyxelConfig {
 
     /** Hypixel API access. */
     public static class Api {
-        /** Personal Hypixel API key from developer.hypixel.net (optional). */
+        /**
+         * Backend proxy base URL (e.g. {@code https://nyxel-proxy.vercel.app/api}).
+         * When set, all Hypixel calls go through it and NO key is needed client-side
+         * — the key lives only on the proxy. Preferred over {@link #hypixelKey}.
+         */
+        public String proxyUrl = "";
+        /** Optional shared token sent to the proxy as {@code X-Nyxel-Token}. */
+        public String modToken = "";
+        /** Personal Hypixel API key (only used for direct calls when no proxy is set). */
         public String hypixelKey = "";
         /** Cache TTL for player/profile/garden data, in seconds. */
         public int cacheSeconds = 300;

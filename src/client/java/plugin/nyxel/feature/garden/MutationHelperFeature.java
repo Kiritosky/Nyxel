@@ -7,6 +7,7 @@ import plugin.nyxel.api.PlayerDataService;
 import plugin.nyxel.api.model.PlayerInfo;
 import plugin.nyxel.config.ConfigManager;
 import plugin.nyxel.core.Feature;
+import plugin.nyxel.core.NyxelExecutor;
 import plugin.nyxel.core.PremiumGate;
 import plugin.nyxel.feature.garden.data.GreenhouseModel;
 import plugin.nyxel.feature.garden.data.MutationRepository;
@@ -34,9 +35,7 @@ public final class MutationHelperFeature implements Feature {
         repo.loadBundled();
         String remote = ConfigManager.get().garden.datasetUrl;
         if (remote != null && !remote.isBlank()) {
-            Thread t = new Thread(() -> repo.tryLoadRemote(remote), "Nyxel-Mutations");
-            t.setDaemon(true);
-            t.start();
+            NyxelExecutor.run("mutations-remote", () -> repo.tryLoadRemote(remote));
         }
         this.planner = new FusionPlanner(repo);
     }

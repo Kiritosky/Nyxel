@@ -10,8 +10,8 @@ import plugin.nyxel.config.gui.render.Render2D;
  */
 public final class ToggleSwitch {
 
-    public static final int W = 24;
-    public static final int H = 12;
+    public static final int W = 28;
+    public static final int H = 14;
 
     private ToggleSwitch() {
     }
@@ -19,6 +19,11 @@ public final class ToggleSwitch {
     public static void render(DrawContext ctx, int x, int y, float anim) {
         int track = lerpColor(NyxelTheme.ACCENT_OFF, NyxelTheme.ACCENT_ON, anim);
         Render2D.roundedRect(ctx, x, y, W, H, H / 2, track);
+        // subtle inner glow on the "on" side so the green reads as active
+        if (anim > 0.02f) {
+            int glow = (Math.round(0x40 * anim) << 24) | (NyxelTheme.ACCENT_ON & 0x00FFFFFF);
+            Render2D.roundedRect(ctx, x + 1, y + 1, W - 2, H - 2, (H - 2) / 2, glow);
+        }
         int knob = H - 4;
         int knobX = x + 2 + Math.round((W - 4 - knob) * anim);
         Render2D.roundedRect(ctx, knobX, y + 2, knob, knob, knob / 2, NyxelTheme.KNOB);

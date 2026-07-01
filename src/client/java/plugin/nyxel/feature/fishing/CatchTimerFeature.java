@@ -4,6 +4,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 import plugin.nyxel.core.Feature;
+import plugin.nyxel.core.TickListener;
 import plugin.nyxel.hud.HudElement;
 import plugin.nyxel.hud.HudText;
 
@@ -12,7 +13,7 @@ import plugin.nyxel.hud.HudText;
  * last catch — and exposes them as a movable HUD element. Catches are detected
  * via {@link BiteDetector} (a bite is the proxy for a catch).
  */
-public final class CatchTimerFeature implements Feature, HudElement {
+public final class CatchTimerFeature implements Feature, TickListener, HudElement {
 
     private final BiteDetector detector = new BiteDetector();
 

@@ -8,7 +8,9 @@ import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import plugin.nyxel.config.gui.NyxelConfigScreen;
+import plugin.nyxel.feature.crafting.CraftingPlannerFeature;
 import plugin.nyxel.feature.garden.MutationHelperFeature;
+import plugin.nyxel.feature.general.MinionPlannerFeature;
 import plugin.nyxel.hud.HudManager;
 
 /**
@@ -46,7 +48,6 @@ public final class EventHooks {
 
         HudRenderCallback.EVENT.register((drawContext, tickCounter) -> {
             hud.render(drawContext);
-            features.onHudRender(drawContext, 0f);
             Alerts.render(drawContext);
         });
 
@@ -62,6 +63,26 @@ public final class EventHooks {
                     if (features.byId(MutationHelperFeature.ID)
                             instanceof MutationHelperFeature mh) {
                         mh.openPlanner(null);
+                    }
+                });
+                return 1;
+            }));
+            dispatcher.register(ClientCommandManager.literal("minions").executes(ctx -> {
+                MinecraftClient mc = MinecraftClient.getInstance();
+                mc.execute(() -> {
+                    if (features.byId(MinionPlannerFeature.ID)
+                            instanceof MinionPlannerFeature mp) {
+                        mp.openPlanner(null);
+                    }
+                });
+                return 1;
+            }));
+            dispatcher.register(ClientCommandManager.literal("recipes").executes(ctx -> {
+                MinecraftClient mc = MinecraftClient.getInstance();
+                mc.execute(() -> {
+                    if (features.byId(CraftingPlannerFeature.ID)
+                            instanceof CraftingPlannerFeature cp) {
+                        cp.openPlanner(null);
                     }
                 });
                 return 1;

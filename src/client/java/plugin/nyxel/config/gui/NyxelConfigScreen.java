@@ -6,18 +6,22 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.text.Text;
 import plugin.nyxel.config.ConfigManager;
+import plugin.nyxel.config.FeatureOptions;
 import plugin.nyxel.config.NyxelConfig;
 import plugin.nyxel.config.gui.option.ButtonOption;
 import plugin.nyxel.config.gui.option.FeatureToggleOption;
 import plugin.nyxel.config.gui.option.OptionRow;
+import plugin.nyxel.config.gui.option.OptionSpec;
 import plugin.nyxel.config.gui.option.SliderOption;
 import plugin.nyxel.config.gui.option.ToggleOption;
 import plugin.nyxel.config.gui.render.Render2D;
 import plugin.nyxel.config.gui.widget.CategoryButton;
 import plugin.nyxel.core.Feature;
 import plugin.nyxel.core.FeatureManager;
+import plugin.nyxel.feature.crafting.CraftingPlannerFeature;
 import plugin.nyxel.feature.garden.MutationHelperFeature;
 import plugin.nyxel.feature.garden.gui.ApiKeyScreen;
+import plugin.nyxel.feature.general.MinionPlannerFeature;
 import plugin.nyxel.hud.HudEditScreen;
 import plugin.nyxel.hud.HudManager;
 
@@ -106,6 +110,7 @@ public final class NyxelConfigScreen extends Screen {
             for (Feature f : features.all()) {
                 if (f.category() == currentTab) {
                     rows.add(new FeatureToggleOption(features, f));
+                    addFeatureOptions(f);
                 }
             }
             addCategoryExtras(currentTab);
@@ -114,7 +119,28 @@ public final class NyxelConfigScreen extends Screen {
                 FeatureToggleOption o = new FeatureToggleOption(features, f);
                 if (o.matches(q)) {
                     rows.add(o);
+                    addFeatureOptions(f);
                 }
+            }
+        }
+    }
+
+    /**
+     * Expand a feature's declared {@link OptionSpec}s into concrete option rows
+     * bound to its namespaced option map. This is what lets a new feature ship its
+     * own settings without editing this screen.
+     */
+    private void addFeatureOptions(Feature f) {
+        String id = f.id();
+        for (OptionSpec spec : f.configOptions()) {
+            switch (spec.kind) {
+                case TOGGLE -> rows.add(new ToggleOption(spec.label, spec.description,
+                        () -> FeatureOptions.getBool(id, spec.key, spec.defBool),
+                        v -> FeatureOptions.setBool(id, spec.key, v)));
+                case SLIDER -> rows.add(new SliderOption(spec.label, spec.description,
+                        spec.min, spec.max,
+                        () -> FeatureOptions.getInt(id, spec.key, spec.defInt),
+                        v -> FeatureOptions.setInt(id, spec.key, v)));
             }
         }
     }
@@ -156,6 +182,20 @@ public final class NyxelConfigScreen extends Screen {
                     "How long Bazaar prices are cached", 30, 600,
                     () -> cfg.economy.priceCacheSeconds,
                     v -> cfg.economy.priceCacheSeconds = v));
+            case CRAFTING -> rows.add(new ButtonOption("Crafting Planner",
+                    "Resolve an item into its full material tree", "Open", () -> {
+                if (features.byId(CraftingPlannerFeature.ID)
+                        instanceof CraftingPlannerFeature cp) {
+                    cp.openPlanner(this);
+                }
+            }));
+            case GENERAL -> rows.add(new ButtonOption("Minion Planner",
+                    "Estimate minion items/hour and time-to-full", "Open", () -> {
+                if (features.byId(MinionPlannerFeature.ID)
+                        instanceof MinionPlannerFeature mp) {
+                    mp.openPlanner(this);
+                }
+            }));
             default -> {
             }
         }
@@ -177,13 +217,21 @@ public final class NyxelConfigScreen extends Screen {
     public void renderBackground(DrawContext ctx, int mouseX, int mouseY, float delta) {
         super.renderBackground(ctx, mouseX, mouseY, delta);
         int l = left(), t = top();
-        // window + header + sidebar
-        Render2D.roundedRect(ctx, l, t, WIN_W, WIN_H, NyxelTheme.RADIUS, NyxelTheme.PANEL_BG);
-        Render2D.roundedOutline(ctx, l, t, WIN_W, WIN_H, NyxelTheme.RADIUS,
+        int r = NyxelTheme.RADIUS;
+        // soft drop shadow for depth, then the panel body
+        Render2D.shadow(ctx, l, t, WIN_W, WIN_H, r, 8);
+        Render2D.roundedRect(ctx, l, t, WIN_W, WIN_H, r, NyxelTheme.PANEL_BG);
+        // header with rounded top corners + a divider under it
+        Render2D.roundedRect(ctx, l, t, WIN_W, NyxelTheme.HEADER_H, r, NyxelTheme.HEADER_BG);
+        ctx.fill(l, t + NyxelTheme.HEADER_H - 1, l + WIN_W, t + NyxelTheme.HEADER_H,
                 NyxelTheme.PANEL_BORDER);
-        ctx.fill(l, t, l + WIN_W, t + NyxelTheme.HEADER_H, NyxelTheme.HEADER_BG);
-        ctx.fill(l, t + NyxelTheme.HEADER_H, l + NyxelTheme.SIDEBAR_W, t + WIN_H,
+        // sidebar (stops short of the rounded bottom corner) + its divider
+        ctx.fill(l, t + NyxelTheme.HEADER_H, l + NyxelTheme.SIDEBAR_W, t + WIN_H - r,
                 NyxelTheme.SIDEBAR_BG);
+        ctx.fill(l + NyxelTheme.SIDEBAR_W - 1, t + NyxelTheme.HEADER_H,
+                l + NyxelTheme.SIDEBAR_W, t + WIN_H - r, NyxelTheme.PANEL_BORDER);
+        // outline on top of everything
+        Render2D.roundedOutline(ctx, l, t, WIN_W, WIN_H, r, NyxelTheme.PANEL_BORDER);
         ctx.drawText(textRenderer, Text.literal("§l§dNyxel"), l + NyxelTheme.PAD,
                 t + 11, NyxelTheme.TEXT, false);
         // search field background

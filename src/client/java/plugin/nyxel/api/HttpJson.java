@@ -23,10 +23,20 @@ public final class HttpJson {
 
     /** GET the URL as JSON, sending the Hypixel {@code API-Key} header if present. */
     public static JsonObject get(String url, String apiKey) throws Exception {
+        return get(url, "API-Key", apiKey);
+    }
+
+    /**
+     * GET the URL as JSON, sending a single custom header if the value is present.
+     * Used for both the direct Hypixel {@code API-Key} and the proxy's
+     * {@code X-Nyxel-Token}.
+     */
+    public static JsonObject get(String url, String headerName, String headerValue)
+            throws Exception {
         HttpRequest.Builder b = HttpRequest.newBuilder(URI.create(url))
                 .timeout(Duration.ofSeconds(10)).GET();
-        if (apiKey != null && !apiKey.isBlank()) {
-            b.header("API-Key", apiKey);
+        if (headerValue != null && !headerValue.isBlank()) {
+            b.header(headerName, headerValue);
         }
         HttpResponse<String> resp = CLIENT.send(b.build(),
                 HttpResponse.BodyHandlers.ofString());

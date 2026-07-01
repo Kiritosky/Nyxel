@@ -1,7 +1,6 @@
 package plugin.nyxel.core;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
 import plugin.nyxel.Nyxel;
 import plugin.nyxel.config.ConfigManager;
 
@@ -21,6 +20,11 @@ public final class FeatureManager {
     private final List<Feature> features = new ArrayList<>();
     private final Map<String, Boolean> enabled = new LinkedHashMap<>();
 
+    // Capability buckets: dispatch only iterates features that opt in, so adding
+    // display-only or callback-based features never grows the per-tick loop.
+    private final List<Feature> tickListeners = new ArrayList<>();
+    private final List<Feature> actionBarListeners = new ArrayList<>();
+
     /** Register a feature. Call during init, before {@link #initEnabledState()}. */
     public void register(Feature feature) {
         for (Feature existing : features) {
@@ -29,6 +33,12 @@ public final class FeatureManager {
             }
         }
         features.add(feature);
+        if (feature instanceof TickListener) {
+            tickListeners.add(feature);
+        }
+        if (feature instanceof ActionBarListener) {
+            actionBarListeners.add(feature);
+        }
     }
 
     /**
@@ -80,10 +90,10 @@ public final class FeatureManager {
     }
 
     public void onClientTick(MinecraftClient mc) {
-        for (Feature f : features) {
+        for (Feature f : tickListeners) {
             if (isEnabled(f.id())) {
                 try {
-                    f.onClientTick(mc);
+                    ((TickListener) f).onClientTick(mc);
                 } catch (Exception e) {
                     Nyxel.LOGGER.error("[{}] tick error", f.id(), e);
                 }
@@ -92,24 +102,12 @@ public final class FeatureManager {
     }
 
     public void onActionBar(String text) {
-        for (Feature f : features) {
+        for (Feature f : actionBarListeners) {
             if (isEnabled(f.id())) {
                 try {
-                    f.onActionBar(text);
+                    ((ActionBarListener) f).onActionBar(text);
                 } catch (Exception e) {
                     Nyxel.LOGGER.error("[{}] actionbar error", f.id(), e);
-                }
-            }
-        }
-    }
-
-    public void onHudRender(DrawContext ctx, float tickDelta) {
-        for (Feature f : features) {
-            if (isEnabled(f.id())) {
-                try {
-                    f.onHudRender(ctx, tickDelta);
-                } catch (Exception e) {
-                    Nyxel.LOGGER.error("[{}] hud error", f.id(), e);
                 }
             }
         }

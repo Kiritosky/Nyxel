@@ -64,8 +64,9 @@ public final class HudManager {
         if (cfg.hud.background) {
             int w = Math.round(element.width() * p.scale);
             int h = Math.round(element.height() * p.scale);
-            Render2D.roundedRect(ctx, (int) p.x - 3, (int) p.y - 2,
-                    w + 6, h + 4, 4, 0x90101015);
+            int bx = (int) p.x - 4, by = (int) p.y - 3, bw = w + 8, bh = h + 6;
+            Render2D.roundedRect(ctx, bx, by, bw, bh, 5, 0x99121218);
+            Render2D.roundedOutline(ctx, bx, by, bw, bh, 5, 0x24FFFFFF);
         }
 
         HudText.beginStyle(cfg.hud.textShadow, p.color, p.chroma);

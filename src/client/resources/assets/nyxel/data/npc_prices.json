@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "source": "Hand-authored seed data from the Hypixel SkyBlock Wiki. 'id' matches the SkyBlock item id stored in item NBT (ExtraAttributes.id). npcSell is coins received selling to an NPC; npcBuy (optional) is the NPC purchase price where one exists.",
+  "prices": [
+    {"id": "COBBLESTONE", "name": "Cobblestone", "npcSell": 1, "npcBuy": 3},
+    {"id": "IRON_INGOT", "name": "Iron Ingot", "npcSell": 2, "npcBuy": 5},
+    {"id": "GOLD_INGOT", "name": "Gold Ingot", "npcSell": 4, "npcBuy": 8},
+    {"id": "REDSTONE", "name": "Redstone", "npcSell": 1, "npcBuy": 4},
+    {"id": "DIAMOND", "name": "Diamond", "npcSell": 8, "npcBuy": 12},
+    {"id": "INK_SACK:4", "name": "Lapis Lazuli", "npcSell": 1, "npcBuy": 4},
+    {"id": "ENDER_PEARL", "name": "Ender Pearl", "npcSell": 6, "npcBuy": 12},
+    {"id": "WHEAT", "name": "Wheat", "npcSell": 3, "npcBuy": 6},
+    {"id": "ENCHANTED_IRON", "name": "Enchanted Iron", "npcSell": 320},
+    {"id": "ENCHANTED_GOLD", "name": "Enchanted Gold", "npcSell": 640},
+    {"id": "ENCHANTED_REDSTONE", "name": "Enchanted Redstone", "npcSell": 160},
+    {"id": "ENCHANTED_DIAMOND", "name": "Enchanted Diamond", "npcSell": 1280},
+    {"id": "ENCHANTED_LAPIS_LAZULI", "name": "Enchanted Lapis Lazuli", "npcSell": 160},
+    {"id": "ENCHANTED_COBBLESTONE", "name": "Enchanted Cobblestone", "npcSell": 160},
+    {"id": "ENCHANTED_ENDER_PEARL", "name": "Enchanted Ender Pearl", "npcSell": 960},
+    {"id": "ENCHANTED_BREAD", "name": "Enchanted Bread", "npcSell": 1152}
+  ]
+}

@@ -17,12 +17,12 @@ public final class CategoryButton {
     public static void render(DrawContext ctx, TextRenderer tr, int x, int y, int w,
                               String label, boolean selected, boolean hover) {
         if (selected) {
-            Render2D.roundedRect(ctx, x, y, w, H, 3, 0x44B14BFF);
-            ctx.fill(x, y + 2, x + 2, y + H - 2, NyxelTheme.ACCENT); // accent bar
+            Render2D.roundedRect(ctx, x, y, w, H, 4, NyxelTheme.ACCENT_SOFT);
+            Render2D.roundedRect(ctx, x, y + 3, 3, H - 6, 1, NyxelTheme.ACCENT); // accent bar
         } else if (hover) {
-            Render2D.roundedRect(ctx, x, y, w, H, 3, NyxelTheme.ROW_HOVER);
+            Render2D.roundedRect(ctx, x, y, w, H, 4, NyxelTheme.ROW_HOVER);
         }
         int color = selected ? NyxelTheme.TEXT : NyxelTheme.TEXT_MUTED;
-        ctx.drawText(tr, Text.literal(label), x + 8, y + (H - 8) / 2, color, false);
+        ctx.drawText(tr, Text.literal(label), x + 10, y + (H - 8) / 2, color, false);
     }
 }

@@ -20,10 +20,12 @@ public final class NyxelSlider {
     public static void render(DrawContext ctx, int x, int y, int w, float frac,
                               int trackColor) {
         frac = Math.max(0f, Math.min(1f, frac));
-        Render2D.roundedRect(ctx, x, y, w, H, H / 2, 0xFF34343E);
+        Render2D.roundedRect(ctx, x, y, w, H, H / 2, NyxelTheme.TRACK);
         int fill = Math.round(w * frac);
         Render2D.roundedRect(ctx, x, y, fill, H, H / 2, trackColor);
         int kx = x + Math.round((w - KNOB) * frac);
+        // knob with a thin accent ring for a more finished look
+        Render2D.roundedRect(ctx, kx - 1, y - 3, KNOB + 2, KNOB + 2, (KNOB + 2) / 2, trackColor);
         Render2D.roundedRect(ctx, kx, y - 2, KNOB, KNOB, KNOB / 2, NyxelTheme.KNOB);
     }
 }

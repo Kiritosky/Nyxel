@@ -20,6 +20,13 @@ hs_err_pid*
 # Common working directory
 run
 
+# Secrets — API keys never belong in the repo. User keys live in the local
+# game config (config/nyxel.json under run/, already ignored). A backend proxy
+# would keep its key in an env var / .env on the server, never committed.
+.env
+*.env
+secrets.properties
+
 ### claude template
 .claude
 .claude-flow

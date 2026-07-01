@@ -7,6 +7,7 @@ import plugin.nyxel.config.ConfigManager;
 import plugin.nyxel.core.Alerts;
 import plugin.nyxel.core.Feature;
 import plugin.nyxel.core.SkyblockState;
+import plugin.nyxel.core.TickListener;
 
 import java.util.Locale;
 import java.util.Set;
@@ -16,7 +17,7 @@ import java.util.Set;
  * current zone's fishing medium — e.g. holding a water rod on the Crimson Isle
  * where you fish in lava. Uses {@link SkyblockState} for the lava/water context.
  */
-public final class GearChecker implements Feature {
+public final class GearChecker implements Feature, TickListener {
 
     private static final Set<String> LAVA_ROD_KEYWORDS =
             Set.of("magma", "inferno", "hellfire", "lava");

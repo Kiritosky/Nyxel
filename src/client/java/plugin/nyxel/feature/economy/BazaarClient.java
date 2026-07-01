@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import plugin.nyxel.Nyxel;
 import plugin.nyxel.config.ConfigManager;
+import plugin.nyxel.core.NyxelExecutor;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -61,9 +62,7 @@ public final class BazaarClient {
         if (!refreshing.compareAndSet(false, true)) {
             return; // a refresh is already in flight
         }
-        Thread t = new Thread(this::fetch, "Nyxel-Bazaar");
-        t.setDaemon(true);
-        t.start();
+        NyxelExecutor.run("bazaar", this::fetch);
     }
 
     private void fetch() {
